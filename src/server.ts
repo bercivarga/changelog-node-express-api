@@ -2,8 +2,10 @@ import express from "express";
 import morgan from "morgan";
 import cors from "cors";
 
-import router from "./router";
+import protectedRouter from "./routers/protectedRouter";
+import openRouter from "./routers/openRouter";
 import middleware from "./middleware";
+import { protect } from "./modules/auth";
 
 const app = express();
 
@@ -19,10 +21,7 @@ app.use(middleware);
 /*
 * Routes
 *  */
-app.get('/', (_req, res) => {
-  res.status(200);
-  res.json({ message: 'Hello World!' });
-});
-app.use("/api", router);
+app.use(openRouter);
+app.use("/api", protect, protectedRouter);
 
 export default app;
