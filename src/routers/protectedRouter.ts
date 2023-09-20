@@ -1,5 +1,7 @@
 import { Router } from "express";
-import {body, validationResult} from "express-validator";
+import { body } from "express-validator";
+
+import validationMiddleware from "../middleware/validationMiddleware";
 
 const router = Router();
 
@@ -11,17 +13,12 @@ router.get("/product", (req, res) => {
   res.json({ message: "Hello World!" });
 });
 router.get("/product/:id", (req, res) => {});
-router.put("/product/:id", body("name").isString(), (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    res.status(400);
-    res.json({ errors: errors.array() });
-  } else {
-    res.status(200);
-    res.json({ message: "Hello World!" });
-  }
+router.put("/product/:id", [body("name").isString(), validationMiddleware], (req, res) => {
+  res.send("Product updated");
 });
-router.post("/product", () => {});
+router.post("/product", [body("name").isString(), validationMiddleware], (req, res) => {
+  res.send("Product created");
+});
 router.delete("/product/:id", () => {});
 
 /**
