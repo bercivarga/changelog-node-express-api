@@ -2,24 +2,18 @@ import { Router } from "express";
 import { body } from "express-validator";
 
 import validationMiddleware from "../middleware/validationMiddleware";
+import { createProduct, deleteProduct, getProduct, getProducts, updateProduct } from "../handlers/product";
 
 const router = Router();
 
 /**
  * Products
  *  */
-router.get("/product", (req, res) => {
-  res.status(200);
-  res.json({ message: "Hello World!" });
-});
-router.get("/product/:id", (req, res) => {});
-router.put("/product/:id", [body("name").isString(), validationMiddleware], (req, res) => {
-  res.send("Product updated");
-});
-router.post("/product", [body("name").isString(), validationMiddleware], (req, res) => {
-  res.send("Product created");
-});
-router.delete("/product/:id", () => {});
+router.get("/product", getProducts);
+router.get("/product/:id", getProduct);
+router.put("/product/:id", [body("name").isString(), validationMiddleware], updateProduct);
+router.post("/product", [body("name").isString(), validationMiddleware], createProduct);
+router.delete("/product/:id", deleteProduct);
 
 /**
  * Updates

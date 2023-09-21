@@ -3,6 +3,11 @@ import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 
+export type JWTUser = {
+  id: number;
+  email: string;
+}
+
 export const generateToken = (user: User) => {
   return jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET!, {
     expiresIn: '30d',
@@ -22,13 +27,18 @@ export const protect = async (req: Request, res: Response, next: NextFunction) =
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET!);
-    res.locals.user = decoded;
+    res.locals.user = decoded as JWTUser;
     next();
   } catch (_error) {
     res.status(401);
     res.send("Couldn't verify token");
     return;
   }
+}
+
+export const getUserFromResponse = (res: Response) => {
+  const user = res.locals.user as JWTUser;
+  return user;
 }
 
 export const comparePassword = async (password: string, hashedPassword: string) => {
